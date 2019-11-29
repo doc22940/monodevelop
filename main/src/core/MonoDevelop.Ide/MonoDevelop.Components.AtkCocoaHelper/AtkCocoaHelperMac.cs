@@ -608,17 +608,23 @@ namespace MonoDevelop.Components.AtkCocoaHelper
 			}
 		}
 
-		public static void MakeAccessibilityAnnouncement (this Atk.Object o,  string message)
+		public static void MakeAccessibilityAnnouncement (this Atk.Object o, string message)
 		{
 			if (o == null)
 				return;
+
 			var nsObject = GetNSAccessibilityElement (o) as NSObject;
-			if (nsObject == null)
+			nsObject?.MakeAccessibilityAnnouncement (message);
+		}
+
+		public static void MakeAccessibilityAnnouncement (this NSObject element, string message)
+		{
+			if (element == null)
 				return;
-			var dictionary =
-				new NSDictionary (NSAccessibilityNotificationUserInfoKeys.AnnouncementKey, new NSString (message),
-								  NSAccessibilityNotificationUserInfoKeys.PriorityKey, NSAccessibilityPriorityLevel.High);
-			NSAccessibility.PostNotification (nsObject, NSAccessibilityNotifications.AnnouncementRequestedNotification, dictionary);
+			
+			var dictionary = new NSDictionary (NSAccessibilityNotificationUserInfoKeys.AnnouncementKey, new NSString (message),
+											   NSAccessibilityNotificationUserInfoKeys.PriorityKey, NSAccessibilityPriorityLevel.High);
+			NSAccessibility.PostNotification (element, NSAccessibilityNotifications.AnnouncementRequestedNotification, dictionary);
 		}
 	}
 
